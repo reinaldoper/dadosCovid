@@ -30,7 +30,8 @@ const t = r.filter((i) => i.id > '06/06/2022')
 console.log(t); */
 function App({ book, apiReal }) {
   console.log(book);
-  const [chartData] = useState({
+  // eslint-disable-next-line no-unused-vars
+  const [chartData, setData] = useState({
     labels: book.map((data) => data.date),
     datasets: [
       {
@@ -47,8 +48,8 @@ function App({ book, apiReal }) {
     const repositorio = async () => {
       const resposta = await fetch('https://www.mercadobitcoin.net/api/BTC/trades/1501871369/1675743530/');
       const repositorios = await resposta.json();
-      /* const arr = repositorios.filter((i) => i.data > '30/12/2022'); */
-      apiReal(repositorios);
+      const arr = repositorios.filter((i) => i.tid > Number(740549));
+      apiReal(arr);
     };
     repositorio();
   }, [apiReal]);
