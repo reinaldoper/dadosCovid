@@ -3,10 +3,10 @@ import React from 'react';
 import "./App.css";
 import BarChart from "./components/BarChart";
 import LineChart from "./components/LineChart";
-import ApiConversão  from "./Data";
+import ApiConversão from "./Data";
+import logo from './logo.svg';
 
 function App() {
-  // eslint-disable-next-line no-unused-vars
   const [userReset, setReset] = useState(false)
   const [userData, setUserData] = useState({});
   useEffect(async () => {
@@ -28,12 +28,12 @@ function App() {
 
   return (
     <div className="App">
-      { userReset ? <div><div style={{ width: 700 }}>
+      {userReset ? <div><div style={{ width: 700 }}>
         <BarChart chartData={userData} />
       </div>
-      <div style={{ width: 700 }}>
-        <LineChart chartData={userData} />
-      </div></div> : <h1>Carregando</h1> }
+        <div style={{ width: 700 }}>
+          <LineChart chartData={userData} />
+        </div></div> : <img src={ logo } alt= 'images' />}
     </div>
   );
 }
