@@ -1,25 +1,95 @@
-import logo from './logo.svg';
+import {
+  Chart as ChartJS,
+  RadialLinearScale,
+  BarElement,
+  LineElement,
+  PointElement,
+  Tooltip,
+  Legend,
+  CategoryScale,
+  LinearScale
+} from "chart.js";
+import PropTypes from 'prop-types'
+import { Line } from "react-chartjs-2";
 import './App.css';
+import { connect } from 'react-redux';
+import { requiretBooks } from './actions/action'
+import React, { useState, useEffect } from 'react';
 
-function App() {
+ChartJS.register(BarElement,
+  LineElement,
+  PointElement,
+  RadialLinearScale,
+  Tooltip,
+  Legend,
+  CategoryScale,
+  LinearScale);
+
+/* const r = [{id: '06/05/2022', name: 'Pau'}, {id: '06/06/2022', name: 'Paulo'}, {id: '06/07/2022', name: 'Paulinha'}, {id: '06/08/2022', name: 'Pau'}, {id: '06/09/2022', name: 'Paulo'}]
+const t = r.filter((i) => i.id > '06/06/2022')
+console.log(t); */
+function App({ book, apiReal }) {
+  console.log(book);
+  const [chartData] = useState({
+    labels: book.map((data) => data.date),
+    datasets: [
+      {
+        label: "Mercado Bitcoim ",
+        data: book.map((data) => Number(data.amount)),
+        borderColor: "red",
+        borderWidth: 1
+      }
+    ]
+  });
+
+  console.log(chartData);
+  useEffect(() => {
+    const repositorio = async () => {
+      const resposta = await fetch('https://www.mercadobitcoin.net/api/BTC/trades/1501871369/1675743530/');
+      const repositorios = await resposta.json();
+      /* const arr = repositorios.filter((i) => i.data > '30/12/2022'); */
+      apiReal(repositorios);
+    };
+    repositorio();
+  }, [apiReal]);
+
+
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <h2 style={{ textAlign: "center" }}>Line Chart</h2>
+        <Line
+          data={chartData}
+          options={{
+            plugins: {
+              title: {
+                display: true,
+                text: "Users Gained between 2016-2020"
+              }
+            }
+          }}
+        />
       </header>
     </div>
   );
 }
 
-export default App;
+const mapStateToProps = (state) => ({
+  book: state.reducerFetch.books,
+});
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    apiReal: (payload) => {
+      dispatch(requiretBooks(payload))
+    }
+  }
+};
+
+App.propTypes = {
+  book: PropTypes.array.isRequired,
+  apiReal: PropTypes.func,
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
